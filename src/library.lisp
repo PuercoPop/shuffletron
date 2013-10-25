@@ -11,7 +11,10 @@
   (setf *library* (make-array 0 :fill-pointer 0 :adjustable t)))
 
 (defun music-file-type (filename)
-  (member (pathname-type filename) '("mp3" "ogg" "flac") :test #'string=))
+  "Should return the string corresponding to the filetype."
+  (awhen (member (pathname-type filename)
+                 '("mp3" "ogg" "flac") :test #'string=)
+    (intern (string-upcase (car it)) :keyword)))
 
 (defvar *library-progress* 0)
 

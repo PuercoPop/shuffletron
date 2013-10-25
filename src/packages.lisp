@@ -7,6 +7,8 @@
                                :subpathp
                                :merge-pathnames*)
   (:import-from :cl-fad :walk-directory)
+  (:import-from :anaphora :it
+                          :awhen)
   (:export #:run #:*shuffletron-version*
            #:emptyp
            #:walk #:rel #:dfn

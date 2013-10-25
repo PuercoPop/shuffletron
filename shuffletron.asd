@@ -7,6 +7,7 @@
   :depends-on (:osicat
                :uiop
                :cl-fad
+               :anaphora
                :mixalot
                :mixalot-mp3
                :mixalot-vorbis
