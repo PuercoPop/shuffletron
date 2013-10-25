@@ -10,13 +10,8 @@
 (defun init-library ()
   (setf *library* (make-array 0 :fill-pointer 0 :adjustable t)))
 
-(defun match-extension (filename extension)
-  (not (mismatch filename extension :test #'char-equal :start1 (- (length filename) (length extension)))))
-
 (defun music-file-type (filename)
-  (or (and (match-extension filename ".mp3") :mp3)
-      (and (match-extension filename ".ogg") :ogg)
-      (and (match-extension filename ".flac") :flac)))
+  (member (pathname-type filename) '("mp3" "ogg" "flac") :test #'string=))
 
 (defvar *library-progress* 0)
 
@@ -28,17 +23,21 @@
 (defun add-song-file (full-filename relative-filename)
   (let ((song (make-song :full-path full-filename
                          :local-path relative-filename
-                         :smashed (smash-string relative-filename)
+                         :smashed (smash-string
+                                   (pathname-name relative-filename))
                          :tags nil)))
     (vector-push-extend song *library*)
     (setf (gethash (song-local-path song) *local-path->song*) song)))
 
 (defun library-scan (path)
+  "Add all songs in the library path."
   (let ((*library-progress* 0))
     (clrhash *local-path->song*)
     (when (probe-file path)
-      (walk path
+      (walk-directory path
             (lambda (filename)
+              "Take a file name if its of music file-type then
+increase the library progress and add song to library."
               (when (music-file-type filename)
                 (incf *library-progress*)
                 (when (zerop (mod *library-progress* 10))

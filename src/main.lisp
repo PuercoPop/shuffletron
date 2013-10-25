@@ -39,8 +39,14 @@ type \"scanid3\". It may take a moment.~%"
       (t (scan-file-metadata :verbose t :adjective "new ")))))
 
 (defun spooky-init ()
-  (let ((stream #+sbcl (sb-sys:make-fd-stream 1 :external-format :latin1 :output t :input nil)
-                #+ccl (ccl::make-fd-stream 1 :direction :io :sharing :lock :encoding :iso-8859-1)))
+  (let ((stream
+         #+sbcl (sb-sys:make-fd-stream 1
+                                       :external-format :latin1
+                                       :output t :input nil)
+         #+ccl (ccl::make-fd-stream 1
+                                    :direction :io
+                                    :sharing :lock
+                                    :encoding :iso-8859-1)))
     (setf *standard-output* stream)
     (setf *error-output*    stream)
     #+sbcl
@@ -282,7 +288,7 @@ type \"scanid3\". It may take a moment.~%"
     ;; Randomize queue
     ((string= line "shuffle")
      (with-playqueue ()
-       (setf *playqueue* (alexandria:shuffle *playqueue*))))    
+       (setf *playqueue* (alexandria:shuffle *playqueue*))))
 
     ;; Add/play in random order
     ((and (string= command "shuffle") args)

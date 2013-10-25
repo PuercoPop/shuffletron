@@ -3,18 +3,17 @@
 ;;;; File names
 
 (defun join-paths (a b)
-  "Append a file name to a path, adding a directory separator if necessary."
-  (declare (type string a b))
-  (if (and (char= #\/ (elt a (1- (length a))))
-	   (zerop (length b)))
-      a
-      (concatenate 'string a (if (char= #\/ (elt a (1- (length a)))) "" "/") b)))
+  "If one is a subpath of the other return the subpath, else merge."
+  (let ((a (truenamize a ))
+        (b (truenamize b)))
+    (cond ((subpathp a b) a)
+          ((subpathp b a) b)
+          (t (merge-pathnames* a b))
+          )))
 
 (defun relative-to (path filename)
-  (let ((index (mismatch (join-paths path "") filename)))
-    (if (zerop index)
-	(error "File ~A is not in path ~A" filename path)
-        (subseq filename index))))
+  "Raise error if file doesn't exist."
+  (merge-pathnames filename path))
 
 ;;;; POSIX directory walker
 
@@ -31,7 +30,7 @@
       (t osicat-posix:dt-unknown))))
 
 (defun %split-list-directory (path)
-  (with-posix-interface ()
+    (with-posix-interface ()
     (let ((dir (osicat-posix:opendir path))
           dirs files)
       (unwind-protect
@@ -48,24 +47,22 @@
 	(osicat-posix:closedir dir)))))
 
 (defun split-list-directory (path)
-  (multiple-value-bind (dirs files) (%split-list-directory path)
-    (values
-     (delete-if (lambda (str) (or (string= str ".") (string= str ".."))) dirs)
-     files)))
+  "Returns a two values. The first is a list of the directories in the
+directory and the second one is a list of the files in the
+directory. '.' and '..' not included"
+  (values (subdirectories path)
+          (set-difference
+           (directory-files path)
+           (subdirectories path)
+           :test #'equal)))
 
 (defun abs-sorted-list-directory (path)
   (multiple-value-bind (dirs files) (split-list-directory path)
       (flet ((absolutize (list)
-               (mapcar (lambda (filename) (join-paths path filename))
-                       (sort list #'string<=))))
+               (mapcar (lambda (filename)
+                         (join-paths path filename))
+                       list))) ; Removed lexicographical Sort
         (values (absolutize dirs) (absolutize files)))))
-
-(defun walk (path fn)
-  "Walk directory tree, ignoring symlinks."
-  (multiple-value-bind (dirs files) (abs-sorted-list-directory path)
-    (map nil fn files)
-    (dolist (dir dirs) (walk dir fn)))
-  (values))
 
 ;;;; Little utilities
 
@@ -139,4 +136,3 @@
 (defun whitespace (in) (val (peek-char t in nil)))
 (defun match (in match)
   (every (lambda (x) (val (char-equal x (val (read-char in nil))))) match))
-

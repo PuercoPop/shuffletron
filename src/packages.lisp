@@ -1,5 +1,12 @@
 (defpackage :shuffletron
   (:use :common-lisp :mixalot)
+  (:import-from :uiop/filesystem :directory-files
+                                 :subdirectories
+                                 :truenamize)
+  (:import-from :uiop/pathname :ensure-absolute-pathname
+                               :subpathp
+                               :merge-pathnames*)
+  (:import-from :cl-fad :walk-directory)
   (:export #:run #:*shuffletron-version*
            #:emptyp
            #:walk #:rel #:dfn

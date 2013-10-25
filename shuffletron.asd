@@ -4,7 +4,13 @@
   :version "0.0.5"
   :author "Andy Hefner <ahefner@gmail.com>"
   :license "MIT-style license"
-  :depends-on (:osicat :mixalot :mixalot-mp3 :mixalot-vorbis :mixalot-flac)
+  :depends-on (:osicat
+               :uiop
+               :cl-fad
+               :mixalot
+               :mixalot-mp3
+               :mixalot-vorbis
+               :mixalot-flac)
   :components ((:module src
                 :serial t
                 :components ((:file "packages")

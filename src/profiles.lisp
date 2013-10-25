@@ -42,6 +42,8 @@
             (user-homedir-pathname)))))
 
 (defun get-profile-base (profile-name)
+  "Returns two values, first the Library Path associated with the the
+profile and secodn a flag t o nil regarding the success of the
+operation"
   (let ((*profile* profile-name))
     (pref "library-base")))
-
