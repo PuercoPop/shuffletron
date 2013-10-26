@@ -65,7 +65,7 @@
 (defun make-streamer (song)
   (ecase (music-file-type (song-full-path song))
     (:mp3  (mixalot-mp3:make-mp3-streamer
-            (song-full-path song)
+            (song-full-path-as-string song)
             :class 'shuffletron-mp3-stream
             :song song
             :prescan (pref "prescan" t)))

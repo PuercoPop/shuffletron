@@ -9,29 +9,31 @@
   (or (<= 65 (char-code character) 90)
       (<= 97 (char-code character) 122)))
 
-(defun decode-as-filename (string)
-  (with-input-from-string (in string)
-    (with-output-to-string (out)
-      (loop as next = (peek-char nil in nil)
-            while next do
-            (cond ((char= next #\%)
-                   (read-char in)
-                   (write-char (code-char
-                                (logior (ash (digit-char-p (read-char in) 16) 4)
-                                        (digit-char-p (read-char in) 16)))
-                               out))
-                  (t (write-char (read-char in) out)))))))
+(defun decode-as-filename (pathname)
+  (let ((string (namestring pathname)))
+    (with-input-from-string (in string)
+      (with-output-to-string (out)
+        (loop as next = (peek-char nil in nil)
+           while next do
+             (cond ((char= next #\%)
+                    (read-char in)
+                    (write-char (code-char
+                                 (logior (ash (digit-char-p (read-char in) 16) 4)
+                                         (digit-char-p (read-char in) 16)))
+                                out))
+                   (t (write-char (read-char in) out))))))))
 
-(defun encode-as-filename (string)
-  (with-input-from-string (in string)
-    (with-output-to-string (out)
-      (loop as next = (peek-char nil in nil)
-            while next do
-            (cond ((tag-unescaped-char-p next) (write-char (read-char in) out))
-                  (t (read-char in)
-                     (write-char #\% out)
-                     (write-char (digit-char (ldb (byte 4 4) (char-code next)) 16) out)
-                     (write-char (digit-char (ldb (byte 4 0) (char-code next)) 16) out)))))))
+(defun encode-as-filename (pathname)
+  (let ((string (namestring pathname)))
+    (with-input-from-string (in string)
+      (with-output-to-string (out)
+        (loop as next = (peek-char nil in nil)
+           while next do
+             (cond ((tag-unescaped-char-p next) (write-char (read-char in) out))
+                   (t (read-char in)
+                      (write-char #\% out)
+                      (write-char (digit-char (ldb (byte 4 4) (char-code next)) 16) out)
+                      (write-char (digit-char (ldb (byte 4 0) (char-code next)) 16) out))))))))
 
 (defun list-tag-files ()
   (directory (merge-pathnames (make-pathname :name :wild)

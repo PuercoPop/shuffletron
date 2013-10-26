@@ -5,7 +5,18 @@
 (defvar *local-path->song* (make-hash-table :test 'equal))
 (define-symbol-macro *library-base* (pref "library-base"))
 
-(defstruct song full-path local-path tags smashed properties matchprops id3 id3-p)
+(defstruct song
+  (full-path nil :type pathname)
+  (local-path nil :type pathname)
+  tags
+  smashed
+  properties
+  matchprops
+  id3
+  id3-p)
+
+(defmethod song-full-path-as-string ((song song))
+  (namestring (song-full-path song)))
 
 (defun init-library ()
   (setf *library* (make-array 0 :fill-pointer 0 :adjustable t)))
