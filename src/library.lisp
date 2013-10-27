@@ -18,6 +18,9 @@
 (defmethod song-full-path-as-string ((song song))
   (namestring (song-full-path song)))
 
+(defmethod song-local-path-as-string ((song song))
+  (namestring (song-local-path song)))
+
 (defun init-library ()
   (setf *library* (make-array 0 :fill-pointer 0 :adjustable t)))
 
@@ -97,7 +100,7 @@ increase the library progress and add song to library."
           (carriage-return)
           (format t "Reading ~Atags: ~:D of ~:D" (or adjective "") n pending)
           (force-output))
-        (setf (song-id3 song) (get-song-metadata (song-full-path song))
+        (setf (song-id3 song) (get-song-metadata (song-full-path-as-string song))
               (song-matchprops song) nil
               (song-id3-p song) t)
         (incf n)

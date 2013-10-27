@@ -83,7 +83,7 @@ directory. '.' and '..' not included"
 
 (defun write-sexp-file (filename object)
   (with-open-file (out filename
-                       :external-format :latin1
+                       :external-format :utf8
                        :direction :output
                        :if-exists :supersede
                        :if-does-not-exist :create)

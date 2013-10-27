@@ -92,7 +92,7 @@ type \"scanid3\". It may take a moment.~%"
       (t nil))))
 
 (defun parse-and-execute (line)
- (let* ((sepidx (position #\Space line))
+  (let* ((sepidx (position #\Space line))
         (command (subseq line 0 sepidx))
         (args    (and sepidx (string-trim " " (subseq line sepidx)))))
   (cond
