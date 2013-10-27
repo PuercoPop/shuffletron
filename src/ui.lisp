@@ -198,7 +198,7 @@ pairs as cons cells."
                   (track-and-title)))
              (setf last-artist artist
                    last-album  album))
-            (t (field (song-local-path-as-string item) :filename)
+            (t (field (song-local-path item) :filename)
                ;; Occasionally we may have an artist but not the
                ;; title.  Clear these, so we don't elide fields that
                ;; we didn't actually print.

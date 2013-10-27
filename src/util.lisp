@@ -11,10 +11,6 @@
           (t (merge-pathnames* a b))
           )))
 
-(defun relative-to (path filename)
-  "Raise error if file doesn't exist."
-  (merge-pathnames filename path))
-
 ;;;; POSIX directory walker
 
 (defmacro with-posix-interface (() &body body)

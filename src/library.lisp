@@ -7,7 +7,7 @@
 
 (defstruct song
   (full-path nil :type pathname)
-  (local-path nil :type pathname)
+  local-path
   tags
   smashed
   properties
@@ -61,7 +61,7 @@ increase the library progress and add song to library."
                   (carriage-return)
                   (format t "Scanning. ~:D files.." *library-progress*)
                   (force-output))
-                (add-song-file filename (relative-to path filename)))))
+                (add-song-file filename (enough-namestring filename path)))))
       t)))
 
 (defun songs-needing-id3-scan () (count-if-not #'song-id3-p *library*))

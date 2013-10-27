@@ -35,7 +35,7 @@
         (labels
             ((field (keyword)
                (let* ((string (if (eql keyword :filename)
-                                  (song-local-path-as-string song)
+                                  (song-local-path song)
                                   (getf (song-id3 song) keyword)))
                       (searchable (if (eql keyword :filename)
                                       (song-smashed song)
